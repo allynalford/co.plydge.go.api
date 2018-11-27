@@ -41,7 +41,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	fm.SelectByOptionValue("Situs_City", "FL")
 
 	if fm.Submit() != nil {
-		panic(err)
+		return events.APIGatewayProxyResponse{}, err
 	}
 
 	doc, err := goquery.NewDocument(bow.Url().String())
@@ -50,19 +50,31 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	}
 
 	//fmt.Printf(doc.Html())
-	var result string
-	var siteAddress string
-	var owner string
+	var result, siteAddress, owner, mailingAddress, id, mileage, use, legal string
 
 	// use CSS selector found with the browser inspector
-	// for each, use index and item
 	siteAddress = doc.Find("body > table:nth-child(3) > tbody > tr > td > table > tbody > tr:nth-child(1) > td:nth-child(1) > table:nth-child(2) > tbody > tr > td:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(2) > span > a > b").Contents().Text()
 	siteAddress = strings.TrimSpace(siteAddress)
 
 	owner = doc.Find("body > table:nth-child(3) > tbody > tr > td > table > tbody > tr:nth-child(1) > td:nth-child(1) > table:nth-child(2) > tbody > tr > td:nth-child(1) > table > tbody > tr:nth-child(2) > td:nth-child(2) > span").Contents().Text()
 	owner = strings.TrimSpace(owner)
 
-	result = fmt.Sprintf("{\"siteaddress\": \"%s\", \"owner\": \"%s\"}", siteAddress, owner)
+	mailingAddress = doc.Find("body > table:nth-child(3) > tbody > tr > td > table > tbody > tr:nth-child(1) > td:nth-child(1) > table:nth-child(2) > tbody > tr > td:nth-child(1) > table > tbody > tr:nth-child(3) > td:nth-child(2) > span").Contents().Text()
+	mailingAddress = strings.TrimSpace(mailingAddress)
+
+	id = doc.Find("body > table:nth-child(3) > tbody > tr > td > table > tbody > tr:nth-child(1) > td:nth-child(1) > table:nth-child(2) > tbody > tr > td:nth-child(3) > table > tbody > tr:nth-child(1) > td:nth-child(2) > span").Contents().Text()
+	id = strings.TrimSpace(id)
+
+	mileage = doc.Find("body > table:nth-child(3) > tbody > tr > td > table > tbody > tr:nth-child(1) > td:nth-child(1) > table:nth-child(2) > tbody > tr > td:nth-child(3) > table > tbody > tr:nth-child(2) > td:nth-child(2) > span").Contents().Text()
+	mileage = strings.TrimSpace(mileage)
+
+	use = doc.Find("body > table:nth-child(3) > tbody > tr > td > table > tbody > tr:nth-child(1) > td:nth-child(1) > table:nth-child(2) > tbody > tr > td:nth-child(3) > table > tbody > tr:nth-child(3) > td:nth-child(2) > span").Contents().Text()
+	use = strings.TrimSpace(mileage)
+
+	legal = doc.Find("body > table:nth-child(3) > tbody > tr > td > table > tbody > tr:nth-child(1) > td:nth-child(1) > table:nth-child(4) > tbody > tr > td:nth-child(2) > span").Contents().Text()
+	legal = strings.TrimSpace(legal)
+
+	result = fmt.Sprintf("{\"siteaddress\": \"%s\", \"owner\": \"%s\", \"mailingAddress\": \"%s\", \"id\": \"%s\", \"milage\": \"%s\", \"use\": \"%s\", \"legal\": \"%s\"}", siteAddress, owner, mailingAddress, id, mileage, use, legal)
 
 	//fmt.Printf(result)
 
