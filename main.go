@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"regexp"
 	"strings"
@@ -16,16 +17,18 @@ import (
 // is processed, it returns an Amazon API Gateway response object to AWS Lambda
 func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
-	//index, err := ioutil.ReadFile("public/index.html")
-	//if err != nil {
-	//	return events.APIGatewayProxyResponse{}, err
-	//	}
-
 	// Create a new browser and open reddit.
 	bow := surf.NewBrowser()
 	err := bow.Open("http://www.bcpa.net/RecAddr.asp")
+
 	if err != nil {
-		panic(err)
+		return events.APIGatewayProxyResponse{}, err
+	}
+
+	if len(request.QueryStringParameters) != 2 {
+
+		err := errors.New("Parameters: Quantity of parameters is invalid")
+		return events.APIGatewayProxyResponse{}, err
 	}
 
 	SitusStreetNumber := request.QueryStringParameters["SN"]
