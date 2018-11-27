@@ -25,7 +25,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		return events.APIGatewayProxyResponse{}, err
 	}
 
-	if len(request.QueryStringParameters) != 2 {
+	if len(request.QueryStringParameters) < 2 {
 
 		err := errors.New("Parameters: Quantity of parameters is invalid")
 		return events.APIGatewayProxyResponse{}, err
