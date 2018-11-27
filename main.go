@@ -27,9 +27,11 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		panic(err)
 	}
 
-	// Log in to the site.
+	SitusStreetNumber := request.QueryStringParameters["SN"]
+
+	// Submit the search form
 	fm, _ := bow.Form("[name='homeind']")
-	fm.Input("Situs_Street_Number", "515")
+	fm.Input("Situs_Street_Number", SitusStreetNumber)
 	fm.SelectByOptionValue("Situs_Street_Direction", "SW")
 	fm.Input("Situs_Street_Name", "18")
 	fm.SelectByOptionValue("Situs_Street_Type", "AVE")
@@ -59,10 +61,9 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	owner = doc.Find("body > table:nth-child(3) > tbody > tr > td > table > tbody > tr:nth-child(1) > td:nth-child(1) > table:nth-child(2) > tbody > tr > td:nth-child(1) > table > tbody > tr:nth-child(2) > td:nth-child(2) > span").Contents().Text()
 	owner = strings.TrimSpace(owner)
 
-	result := fmt.Sprintf("{\"siteaddress\": \"%s\", \"owner\": \"%s\"}", siteAddress, owner)
+	result = fmt.Sprintf("{\"siteaddress\": \"%s\", \"owner\": \"%s\"}", siteAddress, owner)
 
-	fmt.Printf(result)
-	v1 := request.QueryStringParameters["SN"]
+	//fmt.Printf(result)
 
 	return events.APIGatewayProxyResponse{
 		StatusCode: 200,
