@@ -55,9 +55,11 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 
 	fmt.Printf("Page Title: '%s'\n", pageTitle)
 
+	v1 := request.QueryStringParameters["SN"]
+
 	return events.APIGatewayProxyResponse{
 		StatusCode: 200,
-		Body:       string("{\"address\": \"" + pageTitle + "\""),
+		Body:       string("{\"address\": \"" + pageTitle + "\", \"param\": \"" + v1 + "\"}"),
 		Headers: map[string]string{
 			"Content-Type": "text/json",
 		},
