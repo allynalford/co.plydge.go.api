@@ -28,6 +28,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	}
 
 	SitusStreetNumber := request.QueryStringParameters["SN"]
+	SitusUnitNumber := request.QueryStringParameters["UN"]
 
 	// Submit the search form
 	fm, _ := bow.Form("[name='homeind']")
@@ -36,7 +37,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	fm.Input("Situs_Street_Name", "18")
 	fm.SelectByOptionValue("Situs_Street_Type", "AVE")
 	fm.Input("Situs_Street_Post_Dir", "")
-	fm.Input("Situs_Unit_Number", "15")
+	fm.Input("Situs_Unit_Number", SitusUnitNumber)
 	fm.SelectByOptionValue("Situs_City", "FL")
 
 	if fm.Submit() != nil {
