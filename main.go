@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -46,20 +47,26 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	}
 
 	//fmt.Printf(doc.Html())
-
-	var pageTitle string
+	var result string
+	var siteAddress string
+	var owner string
 
 	// use CSS selector found with the browser inspector
 	// for each, use index and item
-	pageTitle = doc.Find("body > table:nth-child(3) > tbody > tr > td > table > tbody > tr:nth-child(1) > td:nth-child(1) > table:nth-child(2) > tbody > tr > td:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(2) > span > a > b").Contents().Text()
+	siteAddress = doc.Find("body > table:nth-child(3) > tbody > tr > td > table > tbody > tr:nth-child(1) > td:nth-child(1) > table:nth-child(2) > tbody > tr > td:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(2) > span > a > b").Contents().Text()
+	siteAddress = strings.TrimSpace(siteAddress)
 
-	fmt.Printf("Page Title: '%s'\n", pageTitle)
+	owner = doc.Find("body > table:nth-child(3) > tbody > tr > td > table > tbody > tr:nth-child(1) > td:nth-child(1) > table:nth-child(2) > tbody > tr > td:nth-child(1) > table > tbody > tr:nth-child(2) > td:nth-child(2) > span").Contents().Text()
+	owner = strings.TrimSpace(owner)
 
+	result := fmt.Sprintf("{\"siteaddress\": \"%s\", \"owner\": \"%s\"}", siteAddress, owner)
+
+	fmt.Printf(result)
 	v1 := request.QueryStringParameters["SN"]
 
 	return events.APIGatewayProxyResponse{
 		StatusCode: 200,
-		Body:       string("{\"address\": \"" + pageTitle + "\", \"param\": \"" + v1 + "\"}"),
+		Body:       string(result),
 		Headers: map[string]string{
 			"Content-Type": "text/json",
 		},
