@@ -31,13 +31,31 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		return events.APIGatewayProxyResponse{}, err
 	}
 
-	SitusStreetNumber := request.QueryStringParameters["SN"]
-	SitusUnitNumber := request.QueryStringParameters["UN"]
+	SitusStreetNumber, ok := request.QueryStringParameters["SN"]
+
+	if ok {
+		err := errors.New("Parameters:Missing Street Name")
+		return events.APIGatewayProxyResponse{}, err
+	}
+
+	SitusUnitNumber, ok := request.QueryStringParameters["UN"]
+
+	if ok {
+		err := errors.New("Parameters:Missing Unit Number")
+		return events.APIGatewayProxyResponse{}, err
+	}
+
+	SitusStreetDirection, ok := request.QueryStringParameters["SD"]
+
+	if ok {
+		err := errors.New("Parameters:Missing Street Direction")
+		return events.APIGatewayProxyResponse{}, err
+	}
 
 	// Submit the search form
 	fm, _ := bow.Form("[name='homeind']")
 	fm.Input("Situs_Street_Number", SitusStreetNumber)
-	fm.SelectByOptionValue("Situs_Street_Direction", "SW")
+	fm.SelectByOptionValue("Situs_Street_Direction", SitusStreetDirection)
 	fm.Input("Situs_Street_Name", "18")
 	fm.SelectByOptionValue("Situs_Street_Type", "AVE")
 	fm.Input("Situs_Street_Post_Dir", "")
@@ -53,10 +71,9 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		return events.APIGatewayProxyResponse{}, err
 	}
 
-	//fmt.Printf(doc.Html())
 	var result, siteAddress, owner, mailingAddress, id, mileage, use, legal string
 
-	// use CSS selector found with the browser inspector
+	// use selector found with the browser inspector
 	siteAddress = doc.Find("body > table:nth-child(3) > tbody > tr > td > table > tbody > tr:nth-child(1) > td:nth-child(1) > table:nth-child(2) > tbody > tr > td:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(2) > span > a > b").Contents().Text()
 
 	//clean up the carriage return
@@ -85,8 +102,6 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	legal = strings.TrimSpace(legal)
 
 	result = fmt.Sprintf("{\"siteaddress\": \"%s\", \"owner\": \"%s\", \"mailingAddress\": \"%s\", \"id\": \"%s\", \"milage\": \"%s\", \"use\": \"%s\", \"legal\": \"%s\"}", siteAddress, owner, mailingAddress, id, mileage, use, legal)
-
-	//fmt.Printf(result)
 
 	return events.APIGatewayProxyResponse{
 		StatusCode: 200,
