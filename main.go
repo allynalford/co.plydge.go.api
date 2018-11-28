@@ -1,17 +1,23 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"regexp"
 	"strings"
 
+	"github.com/PuerkitoBio/goquery"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	"gopkg.in/headzoo/surf.v1"
-
-	"github.com/PuerkitoBio/goquery"
 )
+
+// GenericError base error message
+type GenericError struct {
+	Message string `json:"message"`
+	Code    string `json:"code"`
+}
 
 // Handler is executed by AWS Lambda in the main function. Once the request
 // is processed, it returns an Amazon API Gateway response object to AWS Lambda
@@ -34,8 +40,22 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	SitusStreetNumber, ok := request.QueryStringParameters["SN"]
 
 	if ok {
-		err := errors.New("Parameters:Missing Street Name")
-		return events.APIGatewayProxyResponse{}, err
+		genericError := GenericError{"Parameters:Missing Street Name", "3"}
+
+		ge, err := json.Marshal(genericError)
+		if err != nil {
+			fmt.Println(err)
+			return events.APIGatewayProxyResponse{}, err
+		}
+		//fmt.Println(string(e))
+
+		return events.APIGatewayProxyResponse{
+			StatusCode: 200,
+			Body:       string(ge),
+			Headers: map[string]string{
+				"Content-Type": "text/json",
+			},
+		}, nil
 	}
 
 	SitusUnitNumber, ok := request.QueryStringParameters["UN"]
