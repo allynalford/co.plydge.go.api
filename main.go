@@ -21,7 +21,7 @@ type GenericError struct {
 
 // GenerateError function to create base error message
 func GenerateError(m string, c string, o string) GenericError {
-	genericError := GenericError{"Parameters: " + m, c, o}
+	genericError := GenericError{m, c, o}
 	return genericError
 }
 
@@ -49,6 +49,15 @@ func GenerateErrorResponse(m string, c string, o string) (events.APIGatewayProxy
 	}, nil
 }
 
+// GenericApiProxyResponse function to create base response message with events.APIGatewayProxyResponse
+func GenericApiProxyResponse(c int, b string, h map[string]string) (events.APIGatewayProxyResponse, error) {
+	return events.APIGatewayProxyResponse{
+		StatusCode: c,
+		Body:       b,
+		Headers:    h,
+	}, nil
+}
+
 // Handler is executed by AWS Lambda in the main function. Once the request
 // is processed, it returns an Amazon API Gateway response object to AWS Lambda
 func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
@@ -69,31 +78,55 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 
 	SitusStreetNumber, ok := request.QueryStringParameters["SN"]
 
-	if ok {
-		return GenerateErrorResponse("Parameters:Missing Street Name", "3", SitusStreetNumber)
+	if !ok {
+		return GenerateErrorResponse("Parameters:Missing Street Number", "3", SitusStreetNumber)
 	}
 
 	SitusUnitNumber, ok := request.QueryStringParameters["UN"]
 
-	if ok {
+	if !ok {
 		return GenerateErrorResponse("Parameters: Missing Unit Number", "4", SitusUnitNumber)
 	}
 
 	SitusStreetDirection, ok := request.QueryStringParameters["SD"]
 
-	if ok {
+	if !ok {
 		return GenerateErrorResponse("Parameters: Missing Street Direction", "5", SitusStreetDirection)
+	}
+
+	SitusStreetName, ok := request.QueryStringParameters["HN"]
+
+	if !ok {
+		return GenerateErrorResponse("Parameters: Missing Street Name", "6", SitusStreetName)
+	}
+
+	SitusStreetType, ok := request.QueryStringParameters["ST"]
+
+	if !ok {
+		return GenerateErrorResponse("Parameters: Missing Street Type", "7", SitusStreetType)
+	}
+
+	SitusStreetPostDir, ok := request.QueryStringParameters["PD"]
+
+	if !ok {
+		return GenerateErrorResponse("Parameters: Missing Street Post Direction", "8", SitusStreetPostDir)
+	}
+
+	City, ok := request.QueryStringParameters["CT"]
+
+	if !ok {
+		return GenerateErrorResponse("Parameters: Missing City", "9", City)
 	}
 
 	// Submit the search form
 	fm, _ := bow.Form("[name='homeind']")
 	fm.Input("Situs_Street_Number", SitusStreetNumber)
 	fm.SelectByOptionValue("Situs_Street_Direction", SitusStreetDirection)
-	fm.Input("Situs_Street_Name", "18")
-	fm.SelectByOptionValue("Situs_Street_Type", "AVE")
-	fm.Input("Situs_Street_Post_Dir", "")
+	fm.Input("Situs_Street_Name", SitusStreetName)
+	fm.SelectByOptionValue("Situs_Street_Type", SitusStreetType)
+	fm.Input("Situs_Street_Post_Dir", SitusStreetPostDir)
 	fm.Input("Situs_Unit_Number", SitusUnitNumber)
-	fm.SelectByOptionValue("Situs_City", "FL")
+	fm.SelectByOptionValue("Situs_City", City)
 
 	if fm.Submit() != nil {
 		return GenerateErrorResponse(err.Error(), "1.1", "")
@@ -137,8 +170,6 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 
 	//trim
 	id = strings.TrimSpace(id)
-	//replace
-	//id = strings.Replace(id, " ", "", -1)
 
 	mileage = doc.Find("body > table:nth-child(3) > tbody > tr > td > table > tbody > tr:nth-child(1) > td:nth-child(1) > table:nth-child(2) > tbody > tr > td:nth-child(3) > table > tbody > tr:nth-child(2) > td:nth-child(2) > span").Contents().Text()
 	mileage = strings.TrimSpace(mileage)
