@@ -23,4 +23,6 @@ func TestHandler(t *testing.T) {
 	//assert.Contains(t, response.Body, expectedResponse.Body)
 	//assert.Equal(t, err, nil)
 
+	log.Println(err)
+
 }
