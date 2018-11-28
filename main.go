@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"regexp"
 	"strings"
@@ -23,18 +22,31 @@ type GenericError struct {
 // GenerateError function to create base error message
 func GenerateError(m string, c string, o string) GenericError {
 	genericError := GenericError{"Parameters: " + m, c, o}
-
 	return genericError
 }
 
 // GenerateErrorString function to create base error message
 func GenerateErrorString(m string, c string, o string) ([]byte, error) {
-
-	genericError := GenerateError{m, c, o}
-
+	genericError := GenerateError(m, c, o)
 	ge, err := json.Marshal(genericError)
-
 	return ge, err
+}
+
+// GenerateErrorResponse function to create base error message with events.APIGatewayProxyResponse
+func GenerateErrorResponse(m string, c string, o string) (events.APIGatewayProxyResponse, error) {
+	ge, err := GenerateErrorString(m, c, o)
+
+	if err != nil {
+		return events.APIGatewayProxyResponse{}, err
+	}
+
+	return events.APIGatewayProxyResponse{
+		StatusCode: 200,
+		Body:       string(ge),
+		Headers: map[string]string{
+			"Content-Type": "text/json",
+		},
+	}, nil
 }
 
 // Handler is executed by AWS Lambda in the main function. Once the request
@@ -45,48 +57,32 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	bow := surf.NewBrowser()
 	err := bow.Open("http://www.bcpa.net/RecAddr.asp")
 
+	//Ensure no error opening page
 	if err != nil {
-		return events.APIGatewayProxyResponse{}, err
+		return GenerateErrorResponse(err.Error()+" - Error while opening: http://www.bcpa.net/RecAddr.asp ", "1", "")
 	}
 
-	if len(request.QueryStringParameters) < 2 {
+	if len(request.QueryStringParameters) < 6 {
 
-		err := errors.New("Parameters: Quantity of parameters is invalid")
-		return events.APIGatewayProxyResponse{}, err
+		return GenerateErrorResponse("Parameters: Invalid Parameter Length", "2", "")
 	}
 
 	SitusStreetNumber, ok := request.QueryStringParameters["SN"]
 
 	if ok {
-
-		ge, err := GenerateErrorString("Parameters:Missing Street Name", "3", SitusStreetNumber)
-
-		if err != nil {
-			return events.APIGatewayProxyResponse{}, err
-		}
-		//fmt.Println(string(e))
-
-		return events.APIGatewayProxyResponse{
-			StatusCode: 200,
-			Body:       string(ge),
-			Headers: map[string]string{
-				"Content-Type": "text/json",
-			},
-		}, nil
+		return GenerateErrorResponse("Parameters:Missing Street Name", "3", SitusStreetNumber)
 	}
 
 	SitusUnitNumber, ok := request.QueryStringParameters["UN"]
 
 	if ok {
-		err := errors.New("Parameters:Missing Unit Number")
-		return events.APIGatewayProxyResponse{}, err
+		return GenerateErrorResponse("Parameters: Missing Unit Number", "4", SitusUnitNumber)
 	}
 
 	SitusStreetDirection, ok := request.QueryStringParameters["SD"]
 
 	if ok {
-		err := errors.New("Parameters:Missing Street Direction")
-		return events.APIGatewayProxyResponse{}, err
+		return GenerateErrorResponse("Parameters: Missing Street Direction", "5", SitusStreetDirection)
 	}
 
 	// Submit the search form
@@ -100,12 +96,12 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	fm.SelectByOptionValue("Situs_City", "FL")
 
 	if fm.Submit() != nil {
-		return events.APIGatewayProxyResponse{}, err
+		return GenerateErrorResponse(err.Error(), "1.1", "")
 	}
 
 	doc, err := goquery.NewDocument(bow.Url().String())
 	if err != nil {
-		return events.APIGatewayProxyResponse{}, err
+		return GenerateErrorResponse(err.Error(), "1.1", "")
 	}
 
 	var result, siteAddress, owner, mailingAddress, id, mileage, use, legal string
