@@ -17,6 +17,24 @@ import (
 type GenericError struct {
 	Message string `json:"message"`
 	Code    string `json:"code"`
+	Object  string `json:"object"`
+}
+
+// GenerateError function to create base error message
+func GenerateError(m string, c string, o string) GenericError {
+	genericError := GenericError{"Parameters: " + m, c, o}
+
+	return genericError
+}
+
+// GenerateErrorString function to create base error message
+func GenerateErrorString(m string, c string, o string) ([]byte, error) {
+
+	genericError := GenerateError{m, c, o}
+
+	ge, err := json.Marshal(genericError)
+
+	return ge, err
 }
 
 // Handler is executed by AWS Lambda in the main function. Once the request
@@ -40,11 +58,10 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	SitusStreetNumber, ok := request.QueryStringParameters["SN"]
 
 	if ok {
-		genericError := GenericError{"Parameters:Missing Street Name", "3"}
 
-		ge, err := json.Marshal(genericError)
+		ge, err := GenerateErrorString("Parameters:Missing Street Name", "3", SitusStreetNumber)
+
 		if err != nil {
-			fmt.Println(err)
 			return events.APIGatewayProxyResponse{}, err
 		}
 		//fmt.Println(string(e))
