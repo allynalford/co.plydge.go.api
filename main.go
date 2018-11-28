@@ -79,6 +79,12 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	//clean up the carriage return
 	re := regexp.MustCompile(`\r?\n`)
 	siteAddress = re.ReplaceAllString(siteAddress, " ")
+	//siteAddress = strings.Replace(siteAddress, " 			  ", " ", 1)
+
+	releadclosewhtsp := regexp.MustCompile(`^[\s\p{Zs}]+|[\s\p{Zs}]+$`)
+	reinsidewhtsp := regexp.MustCompile(`[\s\p{Zs}]{2,}`)
+	final := releadclosewhtsp.ReplaceAllString(siteAddress, "")
+	siteAddress = reinsidewhtsp.ReplaceAllString(final, " ")
 
 	//trim whitespace
 	siteAddress = strings.TrimSpace(siteAddress)
@@ -90,10 +96,16 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	mailingAddress = strings.TrimSpace(mailingAddress)
 
 	id = doc.Find("body > table:nth-child(3) > tbody > tr > td > table > tbody > tr:nth-child(1) > td:nth-child(1) > table:nth-child(2) > tbody > tr > td:nth-child(3) > table > tbody > tr:nth-child(1) > td:nth-child(2) > span").Contents().Text()
+
+	releadclosewhtsp2 := regexp.MustCompile(`^[\s\p{Zs}]+|[\s\p{Zs}]+$`)
+	reinsidewhtsp2 := regexp.MustCompile(`[\s\p{Zs}]{2,}`)
+	final2 := releadclosewhtsp2.ReplaceAllString(id, "")
+	id = reinsidewhtsp2.ReplaceAllString(final2, " ")
+
 	//trim
 	id = strings.TrimSpace(id)
 	//replace
-	id = strings.Replace(id, " ", "", -1)
+	//id = strings.Replace(id, " ", "", -1)
 
 	mileage = doc.Find("body > table:nth-child(3) > tbody > tr > td > table > tbody > tr:nth-child(1) > td:nth-child(1) > table:nth-child(2) > tbody > tr > td:nth-child(3) > table > tbody > tr:nth-child(2) > td:nth-child(2) > span").Contents().Text()
 	mileage = strings.TrimSpace(mileage)
