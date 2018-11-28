@@ -49,8 +49,8 @@ func GenerateErrorResponse(m string, c string, o string) (events.APIGatewayProxy
 	}, nil
 }
 
-// GenericApiProxyResponse function to create base response message with events.APIGatewayProxyResponse
-func GenericApiProxyResponse(c int, b string, h map[string]string) (events.APIGatewayProxyResponse, error) {
+// GenericAPIProxyResponse function to create base response message with events.APIGatewayProxyResponse
+func GenericAPIProxyResponse(c int, b string, h map[string]string) (events.APIGatewayProxyResponse, error) {
 	return events.APIGatewayProxyResponse{
 		StatusCode: c,
 		Body:       b,
