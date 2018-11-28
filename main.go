@@ -167,7 +167,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	reinsidewhtsp2 := regexp.MustCompile(`[\s\p{Zs}]{2,}`)
 	final2 := releadclosewhtsp2.ReplaceAllString(id, "")
 	id = reinsidewhtsp2.ReplaceAllString(final2, " ")
-
+	id = strings.Replace(id, " ", "", -1)
 	//trim
 	id = strings.TrimSpace(id)
 
