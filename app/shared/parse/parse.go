@@ -121,7 +121,7 @@ func LoadAppendPropertyAssessments(doc *goquery.Document, _bcpa *model.Bcpa) {
 		if i > 1 {
 			pa := PropertyAssessmentRecord(s)
 			pa.CreatedAt = time.Now()
-			*_bcpa.PropertyAssessments = append(&_bcpa.PropertyAssessments, pa)
+			_bcpa.PropertyAssessments = append(_bcpa.PropertyAssessments, pa)
 		}
 	})
 
@@ -258,7 +258,7 @@ func LoadAppendExemptionsTaxable(doc *goquery.Document, _bcpa *model.Bcpa) {
 		}
 	})
 
-	*_bcpa.ExemptionsTaxable = eta
+	_bcpa.ExemptionsTaxable = eta
 }
 
 // SalesRecord Parse Sales hostory table called by LoadSalesHistory
@@ -293,7 +293,7 @@ func LoadSalesHistory(doc *goquery.Document, _bcpa *model.Bcpa) {
 
 				sale := SalesRecord(s)
 				//append the sale to the struct
-				*_bcpa.SalesHistory = append(&_bcpa.SalesHistory, sale)
+				_bcpa.SalesHistory = append(_bcpa.SalesHistory, sale)
 			}
 		}
 	})
@@ -395,7 +395,7 @@ func LoadLandCalculations(doc *goquery.Document, _bcpa *model.Bcpa) {
 		lcs.Cards = append(lcs.Cards, card)
 	}
 
-	*_bcpa.LandCalculations = lcs
+	_bcpa.LandCalculations = lcs
 }
 
 // SpecialAssessmentRecord extract data for structure called by LoadSpecialAssessments
@@ -439,13 +439,13 @@ func LoadSpecialAssessments(doc *goquery.Document, _bcpa *model.Bcpa) {
 
 			specialAssessment := SpecialAssessmentRecord(s)
 			//append the sale to the struct
-			*_bcpa.SpecialAssessments = append(&_bcpa.SpecialAssessments, specialAssessment)
+			_bcpa.SpecialAssessments = append(&_bcpa.SpecialAssessments, specialAssessment)
 		}
 	})
 }
 
 //ExtractCardURL Parse the data from the card URL
-func ExtractCardURL(cardURL string, i int, _bcpa *model.Bcpa) error {
+func ExtractCardURL(cardURL string, i int, _bcpa *model.Bcpa, _baseUrl string) error {
 
 	// Load the HTML document from the URL
 	doc, err := goquery.NewDocument(_baseURL + cardURL)
@@ -460,43 +460,43 @@ func ExtractCardURL(cardURL string, i int, _bcpa *model.Bcpa) error {
 	} else { //Since we can parse the URL lets set the values
 
 		//urlParams := q.Query() Pulling the tax year and folio
-		*_bcpa.LandCalculations.Cards[i].Folio = q.Query()["folio"][0]
-		*_bcpa.LandCalculations.Cards[i].TaxYear = q.Query()["taxyear"][0]
+		_bcpa.LandCalculations.Cards[i].Folio = q.Query()["folio"][0]
+		_bcpa.LandCalculations.Cards[i].TaxYear = q.Query()["taxyear"][0]
 
 	}
 
 	//Grab the various values
 	//Section 1
-	*_bcpa.LandCalculations.Cards[i].ParcelIDNumber = SingleFindValue(doc, "#Table6 > tbody > tr:nth-child(2) > td:nth-child(1)")
+	_bcpa.LandCalculations.Cards[i].ParcelIDNumber = SingleFindValue(doc, "#Table6 > tbody > tr:nth-child(2) > td:nth-child(1)")
 
 	//Section 2
-	*_bcpa.LandCalculations.Cards[i].UseCode = SingleFindValue(doc, "#Table7 > tbody > tr:nth-child(2) > td > p:nth-child(2) > font")
+	_bcpa.LandCalculations.Cards[i].UseCode = SingleFindValue(doc, "#Table7 > tbody > tr:nth-child(2) > td > p:nth-child(2) > font")
 
 	//Section 3
-	*_bcpa.LandCalculations.Cards[i].NoBedrooms = SingleFindValue(doc, "#Table1 > tbody > tr:nth-child(2) > td:nth-child(1) > p")
+	_bcpa.LandCalculations.Cards[i].NoBedrooms = SingleFindValue(doc, "#Table1 > tbody > tr:nth-child(2) > td:nth-child(1) > p")
 	_bcpa.LandCalculations.Cards[i].NoBaths = SingleFindValue(doc, "#Table1 > tbody > tr:nth-child(2) > td:nth-child(2) > p")
-	**_bcpa.LandCalculations.Cards[i].NoUnits = SingleFindValue(doc, "#Table1 > tbody > tr:nth-child(2) > td:nth-child(3) > p")
-	*_bcpa.LandCalculations.Cards[i].NoStories = SingleFindValue(doc, "#Table1 > tbody > tr:nth-child(2) > td:nth-child(4) > p")
-	*_bcpa.LandCalculations.Cards[i].NoBuildings = SingleFindValue(doc, "#Table1 > tbody > tr:nth-child(2) > td:nth-child(5) > p")
+	_bcpa.LandCalculations.Cards[i].NoUnits = SingleFindValue(doc, "#Table1 > tbody > tr:nth-child(2) > td:nth-child(3) > p")
+	_bcpa.LandCalculations.Cards[i].NoStories = SingleFindValue(doc, "#Table1 > tbody > tr:nth-child(2) > td:nth-child(4) > p")
+	_bcpa.LandCalculations.Cards[i].NoBuildings = SingleFindValue(doc, "#Table1 > tbody > tr:nth-child(2) > td:nth-child(5) > p")
 
 	//Section 4
-	*_bcpa.LandCalculations.Cards[i].Foundation = SingleFindValue(doc, "#Table2 > tbody > tr:nth-child(2) > td:nth-child(1) > p")
-	*_bcpa.LandCalculations.Cards[i].Exterior = SingleFindValue(doc, "#Table2 > tbody > tr:nth-child(2) > td:nth-child(2) > p")
-	*_bcpa.LandCalculations.Cards[i].RoofType = SingleFindValue(doc, "#Table2 > tbody > tr:nth-child(2) > td:nth-child(3) > p")
-	*_bcpa.LandCalculations.Cards[i].RoofMaterial = SingleFindValue(doc, "#Table2 > tbody > tr:nth-child(2) > td:nth-child(4) > p")
+	_bcpa.LandCalculations.Cards[i].Foundation = SingleFindValue(doc, "#Table2 > tbody > tr:nth-child(2) > td:nth-child(1) > p")
+	_bcpa.LandCalculations.Cards[i].Exterior = SingleFindValue(doc, "#Table2 > tbody > tr:nth-child(2) > td:nth-child(2) > p")
+	_bcpa.LandCalculations.Cards[i].RoofType = SingleFindValue(doc, "#Table2 > tbody > tr:nth-child(2) > td:nth-child(3) > p")
+	_bcpa.LandCalculations.Cards[i].RoofMaterial = SingleFindValue(doc, "#Table2 > tbody > tr:nth-child(2) > td:nth-child(4) > p")
 
 	//Section 5
-	*_bcpa.LandCalculations.Cards[i].Interior = SingleFindValue(doc, "#Table3 > tbody > tr:nth-child(2) > td:nth-child(1) > p")
-	*_bcpa.LandCalculations.Cards[i].Floors = SingleFindValue(doc, "#Table3 > tbody > tr:nth-child(2) > td:nth-child(2) > p")
-	*_bcpa.LandCalculations.Cards[i].Plumbing = SingleFindValue(doc, "#Table3 > tbody > tr:nth-child(2) > td:nth-child(3) > p")
-	*_bcpa.LandCalculations.Cards[i].Electric = SingleFindValue(doc, "#Table3 > tbody > tr:nth-child(2) > td:nth-child(4) > p")
-	*_bcpa.LandCalculations.Cards[i].Classification = SingleFindValue(doc, "#Table3 > tbody > tr:nth-child(2) > td:nth-child(5) > p")
+	_bcpa.LandCalculations.Cards[i].Interior = SingleFindValue(doc, "#Table3 > tbody > tr:nth-child(2) > td:nth-child(1) > p")
+	_bcpa.LandCalculations.Cards[i].Floors = SingleFindValue(doc, "#Table3 > tbody > tr:nth-child(2) > td:nth-child(2) > p")
+	_bcpa.LandCalculations.Cards[i].Plumbing = SingleFindValue(doc, "#Table3 > tbody > tr:nth-child(2) > td:nth-child(3) > p")
+	_bcpa.LandCalculations.Cards[i].Electric = SingleFindValue(doc, "#Table3 > tbody > tr:nth-child(2) > td:nth-child(4) > p")
+	_bcpa.LandCalculations.Cards[i].Classification = SingleFindValue(doc, "#Table3 > tbody > tr:nth-child(2) > td:nth-child(5) > p")
 
 	//Section 6
-	*_bcpa.LandCalculations.Cards[i].CeilingHeights = SingleFindValue(doc, "#Table4 > tbody > tr:nth-child(2) > td:nth-child(1) > p")
-	*_bcpa.LandCalculations.Cards[i].QualityOfConstruction = SingleFindValue(doc, "#Table4 > tbody > tr:nth-child(2) > td:nth-child(2) > p")
-	*_bcpa.LandCalculations.Cards[i].CurrentConditionStructure = SingleFindValue(doc, "#Table4 > tbody > tr:nth-child(2) > td:nth-child(3) > p")
-	*_bcpa.LandCalculations.Cards[i].ConstructionClass = SingleFindValue(doc, "#Table4 > tbody > tr:nth-child(2) > td:nth-child(4) > p")
+	_bcpa.LandCalculations.Cards[i].CeilingHeights = SingleFindValue(doc, "#Table4 > tbody > tr:nth-child(2) > td:nth-child(1) > p")
+	_bcpa.LandCalculations.Cards[i].QualityOfConstruction = SingleFindValue(doc, "#Table4 > tbody > tr:nth-child(2) > td:nth-child(2) > p")
+	_bcpa.LandCalculations.Cards[i].CurrentConditionStructure = SingleFindValue(doc, "#Table4 > tbody > tr:nth-child(2) > td:nth-child(3) > p")
+	_bcpa.LandCalculations.Cards[i].ConstructionClass = SingleFindValue(doc, "#Table4 > tbody > tr:nth-child(2) > td:nth-child(4) > p")
 
 	//fmt.Println(card.ParcelIDNumber)
 
@@ -554,7 +554,7 @@ func LoadCardPermits(doc *goquery.Document, i int, _bcpa *model.Bcpa) {
 			permit.PermitDate = strings.TrimSpace(StripSpaces(s.Find("td:nth-child(4)").Find("p").Contents().Text()))
 			permit.CODate = strings.TrimSpace(StripSpaces(s.Find("td:nth-child(5)").Find("p").Contents().Text()))
 			//append the permit to the struct
-			*_bcpa.LandCalculations.Cards[i].Permits = append(&_bcpa.LandCalculations.Cards[i].Permits, permit)
+			_bcpa.LandCalculations.Cards[i].Permits = append(_bcpa.LandCalculations.Cards[i].Permits, permit)
 		}
 	})
 }
