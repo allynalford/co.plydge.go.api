@@ -14,7 +14,7 @@ import (
 )
 
 var (
-	_bcpa    model.Bcpa
+	_bcpa   := Bcpa{}
 	_baseURL = "http://www.bcpa.net/"
 )
 
@@ -67,9 +67,9 @@ func GenericAPIProxyResponse(c int, b string, h map[string]string) (events.APIGa
 }
 
 //LoadBcpaFromDoc used to load Bcpa data from HTML
-func LoadBcpaFromDoc(doc *goquery.Document) Bcpa {
+func LoadBcpaFromDoc(doc *goquery.Document) model.Bcpa {
 
-	var bcpa Bcpa
+	bcpa := Bcpa{}
 	var siteAddress, owner, mailingAddress, id, mileage, use, legal string
 
 	// use selector found with the browser inspector
@@ -127,7 +127,7 @@ func StripSpaces(o string) string {
 }
 
 // marshalBcpa Convert BCPA	to string
-func marshalBcpa(bcpa Bcpa) string {
+func marshalBcpa(bcpa model.Bcpa) string {
 	//user := &User{name:"Frank"}
 	b, err := json.Marshal(bcpa)
 	if err != nil {
