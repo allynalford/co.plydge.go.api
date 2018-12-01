@@ -445,7 +445,7 @@ func LoadSpecialAssessments(doc *goquery.Document, _bcpa *model.Bcpa) {
 }
 
 //ExtractCardURL Parse the data from the card URL
-func ExtractCardURL(cardURL string, i int, _bcpa *model.Bcpa, _baseUrl string) error {
+func ExtractCardURL(cardURL string, i int, _bcpa *model.Bcpa, _baseURL string) error {
 
 	// Load the HTML document from the URL
 	doc, err := goquery.NewDocument(_baseURL + cardURL)
@@ -531,7 +531,7 @@ func LoopCardFeatureTable(doc *goquery.Document, i int, _bcpa *model.Bcpa) {
 	doc.Find("#Table8 > tbody:nth-child(1) > tr").Each(func(tr int, s *goquery.Selection) {
 		if tr > 1 {
 
-			extraFeature := ExtraFeature{Feature: strings.TrimSpace(StripSpaces(s.Find("td > p").Contents().Text()))}
+			extraFeature := model.ExtraFeature{Feature: strings.TrimSpace(StripSpaces(s.Find("td > p").Contents().Text()))}
 
 			//append to the struct
 			_bcpa.LandCalculations.Cards[i].ExtraFeatures = append(_bcpa.LandCalculations.Cards[i].ExtraFeatures, extraFeature)
