@@ -15,7 +15,7 @@ import (
 
 var (
 	_bcpa    Bcpa
-	_baseURL string = "http://www.bcpa.net/"
+	_baseURL = "http://www.bcpa.net/"
 )
 
 // GenericError base error message
@@ -41,7 +41,7 @@ type Bcpa struct {
 	SpecialAssessments  []SpecialAssessment
 }
 
-// RecBuildingCard
+// RecBuildingCard Card page Structure
 type RecBuildingCard struct {
 	CardURL                   string `json:"cardurl"`
 	TaxYear                   string `json:"taxyear"`
@@ -70,12 +70,12 @@ type RecBuildingCard struct {
 	ExtraFeatures             []ExtraFeature
 }
 
-// ExtraFeature
+// ExtraFeature card page features
 type ExtraFeature struct {
 	Feature string `json:"feature"`
 }
 
-// Permit
+// Permit card page permits
 type Permit struct {
 	PermitNo   string `json:"permitco"`
 	PermitType string `json:"permittype"`
@@ -84,7 +84,7 @@ type Permit struct {
 	CODate     string `json:"codate"`
 }
 
-// LandCalculations
+// LandCalculations land calculations structure
 type LandCalculations struct {
 	Calculations    []LandCalculation
 	AdjBldgSF       string `json:"adjbldgsf"`
@@ -94,14 +94,14 @@ type LandCalculations struct {
 	EffActYearBuilt string `json:"effactyearbuilt"`
 }
 
-// LandCalculation
+// LandCalculation land calculation structure
 type LandCalculation struct {
 	Price  string `json:"price"`
 	Factor string `json:"factor"`
 	Type   string `json:"type"`
 }
 
-// SpecialAssessment data
+// SpecialAssessment Special Assessment structure
 type SpecialAssessment struct {
 	Fire  string `json:"fire"`
 	Garb  string `json:"garb"`
@@ -114,7 +114,7 @@ type SpecialAssessment struct {
 	Misc  string `json:"misc"`
 }
 
-// RecPatriotSketch
+// RecPatriotSketch Sketch structure
 type RecPatriotSketch struct {
 	Sketch       string `json:"sketch"`
 	Building     string `json:"building"`
@@ -124,7 +124,7 @@ type RecPatriotSketch struct {
 	AdjAreaTotal string `json:"adjareatotal"`
 }
 
-// PatriotSketchCode
+// PatriotSketchCode Sketch Code structure
 type PatriotSketchCode struct {
 	Code        string `json:"code"`
 	Description string `json:"description"`
@@ -297,11 +297,11 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 
 	// Create a new browser and open reddit.
 	bow := surf.NewBrowser()
-	err := bow.Open("http://www.bcpa.net/RecAddr.asp")
+	err := bow.Open(_baseURL + "RecAddr.asp")
 
 	//Ensure no error opening page
 	if err != nil {
-		return GenerateErrorResponse(err.Error()+" - Error while opening: http://www.bcpa.net/RecAddr.asp ", "1", "")
+		return GenerateErrorResponse(err.Error()+" - Error while opening: "+_baseURL+"RecAddr.asp ", "1", "")
 	}
 
 	if len(request.QueryStringParameters) < 6 {
