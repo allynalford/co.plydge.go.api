@@ -146,6 +146,15 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	//Load the BCPA parent node from the HTML receieved from URL
 	_bcpa = parse.LoadBcpaFromDoc(doc)
 
+	//Load the class level BCPA object with with assessments
+	parse.LoadAppendPropertyAssessments(doc)
+
+	//load exemptions
+	parse.LoadAppendExemptionsTaxable(doc)
+
+	//Load Sales History
+	parse.LoadSalesHistory(doc)
+
 	return events.APIGatewayProxyResponse{
 		StatusCode: 200,
 		Body:       string(parse.MarshalBcpa(_bcpa)),
