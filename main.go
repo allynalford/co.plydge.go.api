@@ -2,6 +2,7 @@ package main
 
 import (
 	"app/model"
+	"app/shared/parse"
 	"encoding/json"
 
 	"github.com/PuerkitoBio/goquery"
@@ -143,7 +144,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	}
 
 	//Load the BCPA parent node from the HTML receieved from URL
-	_bcpa = LoadBcpaFromDoc(doc)
+	_bcpa = parse.LoadBcpaFromDoc(doc)
 
 	return events.APIGatewayProxyResponse{
 		StatusCode: 200,
