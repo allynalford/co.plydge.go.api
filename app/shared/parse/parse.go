@@ -259,7 +259,7 @@ func LoadAppendExemptionsTaxable(doc *goquery.Document, _bcpa *model.Bcpa) {
 }
 
 // SalesRecord Parse Sales hostory table called by LoadSalesHistory
-func SalesRecord(s *goquery.Selection) Sale {
+func SalesRecord(s *goquery.Selection) model.Sale {
 	sale := model.Sale{}
 
 	s.Find("td").Each(func(int int, s *goquery.Selection) {
