@@ -58,8 +58,8 @@ func LoadBcpaFromDoc(doc *goquery.Document) model.Bcpa {
 	return bcpa
 }
 
-// marshalBcpa Convert BCPA	to string
-func marshalBcpa(bcpa model.Bcpa) string {
+// MarshalBcpa Convert BCPA	to string
+func MarshalBcpa(bcpa model.Bcpa) string {
 	//user := &User{name:"Frank"}
 	b, err := json.Marshal(bcpa)
 	if err != nil {

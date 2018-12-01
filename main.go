@@ -148,7 +148,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 
 	return events.APIGatewayProxyResponse{
 		StatusCode: 200,
-		Body:       string(parse.marshalBcpa(_bcpa)),
+		Body:       string(parse.MarshalBcpa(_bcpa)),
 		Headers: map[string]string{
 			"Content-Type": "text/json",
 		},
