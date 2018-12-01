@@ -14,7 +14,7 @@ import (
 )
 
 var (
-	_bcpa   model.Bcpa{}
+	_bcpa    model.Bcpa
 	_baseURL = "http://www.bcpa.net/"
 )
 
