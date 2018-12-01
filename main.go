@@ -4,6 +4,8 @@ import (
 	"app/model"
 	"app/shared/parse"
 	"encoding/json"
+	"log"
+	"net/url"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/aws/aws-lambda-go/events"
@@ -154,6 +156,39 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 
 	//Load Sales History
 	parse.LoadSalesHistory(doc, &_bcpa)
+
+	//Load the Land Calculations
+	parse.LoadLandCalculations(doc, &_bcpa)
+
+	//Load the Special Assessments
+	parse.LoadSpecialAssessments(doc, &_bcpa)
+
+	//Check if we have a URL for the CARD page. If so Parse it for data
+	if len(_bcpa.LandCalculations.Cards) > 0 {
+
+		//Let's loop the cards if more then one
+		i := 0
+		for _, card := range _bcpa.LandCalculations.Cards {
+
+			//Grab the URL from the card
+			CardURL, error := url.QueryUnescape(card.CardURL)
+
+			if error != nil {
+				log.Fatal(error)
+			}
+
+			//Start parseing the page
+			error = parse.ExtractCardURL(CardURL, i, &_bcpa)
+
+			//Increment
+			i++
+
+			if error != nil {
+				log.Fatal(error)
+			}
+
+		}
+	}
 
 	return events.APIGatewayProxyResponse{
 		StatusCode: 200,
