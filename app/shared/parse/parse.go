@@ -111,7 +111,7 @@ func ParseRecord(s *goquery.Selection) model.PropertyAssessmentValue {
 }
 
 //LoadAppendPropertyAssessments used to load and append Assessments to the BCPA parent node
-func LoadAppendPropertyAssessments(doc *goquery.Document) {
+func LoadAppendPropertyAssessments(doc *goquery.Document, _bcpa *model.Bcpa) {
 
 	doc.Find("body > table:nth-child(3) > tbody > tr > td > table > tbody > tr:nth-child(1) > td:nth-child(1) > table:nth-child(6) > tbody > tr").Each(func(i int, s *goquery.Selection) {
 
@@ -238,7 +238,7 @@ func ExemptionsTaxableRecord(s *goquery.Selection, i int, eta model.ExemptionsTa
 }
 
 // LoadAppendExemptionsTaxable Load Taxable and Exemptions Calls ExemptionsTaxableRecord
-func LoadAppendExemptionsTaxable(doc *goquery.Document) {
+func LoadAppendExemptionsTaxable(doc *goquery.Document, _bcpa *model.Bcpa) {
 
 	//Preload the object
 	eta := model.ExemptionsTaxableValuesbyTaxingAuthority{}
@@ -281,7 +281,7 @@ func SalesRecord(s *goquery.Selection) Sale {
 }
 
 // LoadSalesHistory Load up the sales history table in objects and append to BCPA parent calls SalesRecord
-func LoadSalesHistory(doc *goquery.Document) {
+func LoadSalesHistory(doc *goquery.Document, _bcpa *model.Bcpa) {
 
 	doc.Find("body > table:nth-child(3) > tbody > tr > td > table > tbody > tr:nth-child(1) > td:nth-child(1) > table:nth-child(10) > tbody > tr > td:nth-child(1) > table:nth-child(1) > tbody > tr").Each(func(i int, s *goquery.Selection) {
 

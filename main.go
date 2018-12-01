@@ -147,13 +147,13 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	_bcpa = parse.LoadBcpaFromDoc(doc)
 
 	//Load the class level BCPA object with with assessments
-	parse.LoadAppendPropertyAssessments(doc)
+	parse.LoadAppendPropertyAssessments(doc, &_bcpa)
 
 	//load exemptions
-	parse.LoadAppendExemptionsTaxable(doc)
+	parse.LoadAppendExemptionsTaxable(doc, &_bcpa)
 
 	//Load Sales History
-	parse.LoadSalesHistory(doc)
+	parse.LoadSalesHistory(doc, &_bcpa)
 
 	return events.APIGatewayProxyResponse{
 		StatusCode: 200,
