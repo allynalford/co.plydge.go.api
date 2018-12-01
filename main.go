@@ -14,7 +14,7 @@ import (
 )
 
 var (
-	_bcpa   := Bcpa{}
+	_bcpa    = Bcpa{}
 	_baseURL = "http://www.bcpa.net/"
 )
 
