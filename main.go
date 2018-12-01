@@ -14,7 +14,7 @@ import (
 )
 
 var (
-	_bcpa    = Bcpa{}
+	_bcpa   model.Bcpa{}
 	_baseURL = "http://www.bcpa.net/"
 )
 
@@ -69,7 +69,7 @@ func GenericAPIProxyResponse(c int, b string, h map[string]string) (events.APIGa
 //LoadBcpaFromDoc used to load Bcpa data from HTML
 func LoadBcpaFromDoc(doc *goquery.Document) model.Bcpa {
 
-	bcpa := Bcpa{}
+	bcpa := model.Bcpa{}
 	var siteAddress, owner, mailingAddress, id, mileage, use, legal string
 
 	// use selector found with the browser inspector
