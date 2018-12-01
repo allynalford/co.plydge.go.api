@@ -178,7 +178,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 			}
 
 			//Start parseing the page
-			error = parse.ExtractCardURL(CardURL, i, &_bcpa)
+			error = parse.ExtractCardURL(CardURL, i, &_bcpa, _baseURL)
 
 			//Increment
 			i++

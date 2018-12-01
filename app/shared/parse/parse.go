@@ -439,7 +439,7 @@ func LoadSpecialAssessments(doc *goquery.Document, _bcpa *model.Bcpa) {
 
 			specialAssessment := SpecialAssessmentRecord(s)
 			//append the sale to the struct
-			_bcpa.SpecialAssessments = append(&_bcpa.SpecialAssessments, specialAssessment)
+			_bcpa.SpecialAssessments = append(_bcpa.SpecialAssessments, specialAssessment)
 		}
 	})
 }
@@ -504,7 +504,7 @@ func ExtractCardURL(cardURL string, i int, _bcpa *model.Bcpa, _baseUrl string) e
 	if doc.Find("#Table8 > tbody:nth-child(1) > tr").Size() > 0 {
 		fmt.Println("We Have Features")
 
-		LoopCardFeatureTable(doc, i, &_bcpa)
+		LoopCardFeatureTable(doc, i, _bcpa)
 
 	} else {
 		fmt.Println("We DONT Have Features: " + strconv.Itoa(doc.Find("#Table8 > tbody:nth-child(1) > tr").Size()))
@@ -515,7 +515,7 @@ func ExtractCardURL(cardURL string, i int, _bcpa *model.Bcpa, _baseUrl string) e
 		fmt.Println("Permits: " + strconv.Itoa(len(doc.Find("#Table5 > tbody:nth-child(1) > tr:nth-child(2) > td:nth-child(1)").Find("p").Contents().Text())))
 		fmt.Println("Permit 1 Val: " + doc.Find("#Table5 > tbody:nth-child(1) > tr:nth-child(2) > td:nth-child(1)").Find("p").Contents().Text())
 
-		LoadCardPermits(doc, i, &_bcpa)
+		LoadCardPermits(doc, i, _bcpa)
 
 	} else {
 		fmt.Println("We DONT Have Permits: " + strconv.Itoa(doc.Find("#Table5 > tbody:nth-child(1) > tr").Size()))
@@ -534,7 +534,7 @@ func LoopCardFeatureTable(doc *goquery.Document, i int, _bcpa *model.Bcpa) {
 			extraFeature := ExtraFeature{Feature: strings.TrimSpace(StripSpaces(s.Find("td > p").Contents().Text()))}
 
 			//append to the struct
-			*_bcpa.LandCalculations.Cards[i].ExtraFeatures = append(&_bcpa.LandCalculations.Cards[i].ExtraFeatures, extraFeature)
+			_bcpa.LandCalculations.Cards[i].ExtraFeatures = append(_bcpa.LandCalculations.Cards[i].ExtraFeatures, extraFeature)
 		}
 	})
 }
@@ -542,7 +542,7 @@ func LoopCardFeatureTable(doc *goquery.Document, i int, _bcpa *model.Bcpa) {
 // LoadCardPermits load the permits from the cards page calls ExtractCardURL
 func LoadCardPermits(doc *goquery.Document, i int, _bcpa *model.Bcpa) {
 
-	permit := Permit{}
+	permit := model.Permit{}
 
 	doc.Find("#Table5 > tbody > tr").Each(func(tr int, s *goquery.Selection) {
 
